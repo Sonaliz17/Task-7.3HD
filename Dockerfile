@@ -1,18 +1,18 @@
+# Use Node.js base image
 FROM node:18
 
-# Backend setup
+# === Backend build ===
 WORKDIR /app/backend
-COPY backend/package*.json ./
+COPY Backend/package*.json ./
 RUN npm install
-COPY backend .
+COPY Backend .
 
-# Frontend setup
+# === Frontend build ===
 WORKDIR /app/frontend
-COPY frontend/package*.json ./
+COPY Frontend/package*.json ./
 RUN npm install
-COPY frontend .
+COPY Frontend .
 RUN npm run build
 
-# Optional: expose ports, set up for Node.js backend
-WORKDIR /app/backend
-CMD ["node", "server.js"]
+# === Final CMD to start backend ===
+CMD ["node", "/app/backend/server.js"]

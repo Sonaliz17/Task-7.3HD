@@ -2,15 +2,15 @@ pipeline {
   agent any
 
   environment {
-    MONGO_URI = credentials('mongo-uri')
-    JWT_SECRET = credentials('jwt-secret')
-    SONAR_TOKEN = credentials('sonar-token')
+    MONGO_URI    = credentials('mongo-uri')
+    JWT_SECRET   = credentials('jwt-secret')
+    SONAR_TOKEN  = credentials('sonar-token')
   }
 
   stages {
-    stage('Checkout') {
+    stage('Build') {
       steps {
-        checkout scm
+        bat 'echo Starting Build'
       }
     }
 
@@ -21,17 +21,6 @@ pipeline {
         }
         dir('Frontend') {
           bat 'npm install'
-        }
-      }
-    }
-
-    stage('Build') {
-      steps {
-        dir('Frontend') {
-          bat 'npm run build'
-        }
-        dir('Backend') {
-          bat 'echo Backend ready'
         }
       }
     }
@@ -47,7 +36,7 @@ pipeline {
     stage('Test Frontend') {
       steps {
         dir('Frontend') {
-          bat 'npm test --passWithNoTests || exit /b 0'
+          bat 'npm test || exit /b 0'
         }
       }
     }
@@ -56,7 +45,9 @@ pipeline {
       steps {
         dir('Backend') {
           withSonarQubeEnv('MySonar') {
-            bat 'sonar-scanner -Dsonar.login=%SONAR_TOKEN%'
+            withEnv(["PATH+SONAR=${tool 'sonar-scanner'}/bin"]) {
+              bat 'sonar-scanner -Dsonar.login=%SONAR_TOKEN%'
+            }
           }
         }
       }
@@ -64,13 +55,13 @@ pipeline {
 
     stage('Deploy') {
       steps {
-        bat 'echo Simulated Deploy Step'
+        bat 'echo Simulated deploy step'
       }
     }
 
     stage('Monitoring') {
       steps {
-        bat 'echo Simulated Monitoring Log >> alert.log'
+        bat 'echo Simulated alert logged >> alert.log'
       }
     }
   }

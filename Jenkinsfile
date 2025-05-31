@@ -7,17 +7,17 @@ pipeline {
     SONAR_TOKEN  = credentials('sonar-token')
   }
 stages{
-  stage('Build') {
-  steps {
-    bat 'docker build -t habitflow-app .'
-  }
-}
-stage('Archive Docker Image') {
-  steps {
-    bat 'docker save habitflow-app -o habitflow.tar'
-    archiveArtifacts artifacts: 'habitflow.tar', fingerprint: true
-  }
-}
+ // stage('Build') {
+  //steps {
+    //bat 'docker build -t habitflow-app .'
+  //}
+//}
+//stage('Archive Docker Image') {
+  //steps {
+    //bat 'docker save habitflow-app -o habitflow.tar'
+    //archiveArtifacts artifacts: 'habitflow.tar', fingerprint: true
+  //}
+//}
 
     stage('Install Dependencies') {
       steps {

@@ -9,14 +9,34 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        bat 'echo Building (replace with docker build command if needed)'
+        bat 'echo Starting Build'
       }
     }
 
-    stage('Test') {
+    stage('Install Dependencies') {
       steps {
-        bat 'npm install'
-        bat 'npm test || exit /b 0'
+        dir('Backend') {
+          bat 'npm install'
+        }
+        dir('Frontend') {
+          bat 'npm install'
+        }
+      }
+    }
+
+    stage('Test Backend') {
+      steps {
+        dir('Backend') {
+          bat 'npm test || exit /b 0'
+        }
+      }
+    }
+
+    stage('Test Frontend') {
+      steps {
+        dir('Frontend') {
+          bat 'npm test || exit /b 0'
+        }
       }
     }
 
@@ -25,21 +45,23 @@ pipeline {
         SONAR_TOKEN = credentials('sonar-token')
       }
       steps {
-        withSonarQubeEnv('MySonar') {
-          bat 'sonar-scanner -Dsonar.login=%SONAR_TOKEN%'
+        dir('Backend') {
+          withSonarQubeEnv('MySonar') {
+            bat 'sonar-scanner -Dsonar.login=%SONAR_TOKEN%'
+          }
         }
       }
     }
 
     stage('Deploy') {
       steps {
-        bat 'echo Simulating deployment (replace with real deploy)'
+        bat 'echo Simulated deploy step'
       }
     }
 
     stage('Monitoring') {
       steps {
-        bat 'echo Simulated alert >> alert.log'
+        bat 'echo Simulated alert logged >> alert.log'
       }
     }
   }

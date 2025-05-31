@@ -2,9 +2,9 @@ pipeline {
   agent any
 
   environment {
-    MONGO_URI = credentials('mongo-uri')
-    JWT_SECRET = credentials('jwt-secret')
-    SONAR_TOKEN = credentials('sonar-token')
+    MONGO_URI    = credentials('mongo-uri')
+    JWT_SECRET   = credentials('jwt-secret')
+    SONAR_TOKEN  = credentials('sonar-token')
   }
 
   stages {
@@ -28,7 +28,7 @@ pipeline {
     stage('Test Backend') {
       steps {
         dir('Backend') {
-          bat 'npm test || exit /b 0' // Avoid failure if no tests
+          bat 'npm test || exit /b 0'
         }
       }
     }
@@ -36,7 +36,7 @@ pipeline {
     stage('Test Frontend') {
       steps {
         dir('Frontend') {
-          bat 'npm test || exit /b 0' // Avoid failure if no tests
+          bat 'npm test || exit /b 0'
         }
       }
     }
@@ -44,8 +44,8 @@ pipeline {
     stage('Code Quality') {
       steps {
         dir('Backend') {
-          withSonarQubeEnv('MySonar') { // Match the name in Jenkins > Configure System
-            withEnv(["PATH+SONAR=${tool 'SonarScannerCLI'}/bin"]) { // Match the tool name in Global Tool Config
+          withSonarQubeEnv('MySonar') {
+            withEnv(["PATH+SONAR=${tool 'sonar-scanner'}/bin"]) {
               bat 'sonar-scanner -Dsonar.login=%SONAR_TOKEN%'
             }
           }
@@ -66,3 +66,4 @@ pipeline {
     }
   }
 }
+

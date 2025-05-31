@@ -9,11 +9,11 @@ pipeline {
 
   stages {
     stage('Build') {
-      steps {
-        echo '🛠️ Building Docker image...'
-        bat 'docker build -t habitflow:latest .'
-      }
-    }
+  steps {
+    echo '🔧 Building Docker image...'
+    bat 'docker build -t habitflow:latest .'
+  }
+}
 
     stage('Install Dependencies') {
       steps {

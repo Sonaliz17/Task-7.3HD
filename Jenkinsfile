@@ -7,8 +7,7 @@ pipeline {
     SONAR_TOKEN  = credentials('sonar-token')
   }
 
-  stages {
-    stage('Build') {
+ stage('Build') {
   steps {
     echo '🔧 Building Docker image...'
     bat 'docker build -t habitflow:latest .'

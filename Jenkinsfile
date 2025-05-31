@@ -7,12 +7,15 @@ pipeline {
     SONAR_TOKEN  = credentials('sonar-token')
   }
 
-  stages {
-    stage('Build') {
-      steps {
-        bat 'echo Starting Build'
-      }
-    }
+ stage('Build') {
+  steps {
+    echo '🛠️ Running frontend build and Docker image creation...'
+    
+    bat 'docker build -t habitflow:latest .'
+    
+    echo '✅ Docker image built successfully.'
+  }
+}
 
     stage('Install Dependencies') {
       steps {

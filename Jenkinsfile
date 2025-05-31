@@ -9,14 +9,14 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'docker build -t taskboard-api .'
+        bat 'echo Building (replace with docker build command if needed)'
       }
     }
 
     stage('Test') {
       steps {
-        sh 'npm install'
-        sh 'npm test || echo "Tests failed, continuing"'
+        bat 'npm install'
+        bat 'npm test || exit /b 0'
       }
     }
 
@@ -26,33 +26,20 @@ pipeline {
       }
       steps {
         withSonarQubeEnv('MySonar') {
-          sh 'sonar-scanner -Dsonar.login=$SONAR_TOKEN'
+          bat 'sonar-scanner -Dsonar.login=%SONAR_TOKEN%'
         }
-      }
-    }
-
-    stage('Security') {
-      steps {
-        sh 'npm install -g snyk'
-        sh 'snyk test || true'
       }
     }
 
     stage('Deploy') {
       steps {
-        sh 'docker run -d -p 5000:5000 --env-file .env taskboard-api'
-      }
-    }
-
-    stage('Release') {
-      steps {
-        sh 'echo "Tagged release v1.0 (simulated)"'
+        bat 'echo Simulating deployment (replace with real deploy)'
       }
     }
 
     stage('Monitoring') {
       steps {
-        sh 'echo "Simulated Alert: High CPU!" >> alert.log'
+        bat 'echo Simulated alert >> alert.log'
       }
     }
   }

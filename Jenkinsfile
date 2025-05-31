@@ -7,12 +7,14 @@ pipeline {
     SONAR_TOKEN  = credentials('sonar-token')
   }
 
-  stages {
-    stage('Build') {
-      steps {
-        bat 'echo Starting Build'
-      }
+  stage('Build') {
+  steps {
+    dir('Frontend') {
+      bat 'npm run build'
     }
+  }
+}
+
 
     stage('Install Dependencies') {
       steps {

@@ -7,10 +7,6 @@ pipeline {
     SONAR_TOKEN = credentials('sonar-token')
   }
 
-  tools {
-    nodejs 'NodeJS 18'  // Make sure Jenkins global tool config has this label
-  }
-
   stages {
     stage('Checkout') {
       steps {

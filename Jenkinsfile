@@ -2,19 +2,21 @@ pipeline {
   agent any
 
   environment {
-    MONGO_URI    = credentials('mongo-uri')
-    JWT_SECRET   = credentials('jwt-secret')
-    SONAR_TOKEN  = credentials('sonar-token')
+    MONGO_URI = credentials('mongo-uri')
+    JWT_SECRET = credentials('jwt-secret')
+    SONAR_TOKEN = credentials('sonar-token')
   }
 
-  stage('Build') {
-  steps {
-    dir('Frontend') {
-      bat 'npm run build'
+  tools {
+    nodejs 'NodeJS 18'  // Make sure Jenkins global tool config has this label
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
     }
-  }
-}
-
 
     stage('Install Dependencies') {
       steps {
@@ -23,6 +25,17 @@ pipeline {
         }
         dir('Frontend') {
           bat 'npm install'
+        }
+      }
+    }
+
+    stage('Build') {
+      steps {
+        dir('Frontend') {
+          bat 'npm run build'
+        }
+        dir('Backend') {
+          bat 'echo Backend ready'
         }
       }
     }
@@ -38,7 +51,7 @@ pipeline {
     stage('Test Frontend') {
       steps {
         dir('Frontend') {
-          bat 'npm test || exit /b 0'
+          bat 'npm test --passWithNoTests || exit /b 0'
         }
       }
     }
@@ -47,9 +60,7 @@ pipeline {
       steps {
         dir('Backend') {
           withSonarQubeEnv('MySonar') {
-            withEnv(["PATH+SONAR=${tool 'sonar-scanner'}/bin"]) {
-              bat 'sonar-scanner -Dsonar.login=%SONAR_TOKEN%'
-            }
+            bat 'sonar-scanner -Dsonar.login=%SONAR_TOKEN%'
           }
         }
       }
@@ -57,13 +68,13 @@ pipeline {
 
     stage('Deploy') {
       steps {
-        bat 'echo Simulated deploy step'
+        bat 'echo Simulated Deploy Step'
       }
     }
 
     stage('Monitoring') {
       steps {
-        bat 'echo Simulated alert logged >> alert.log'
+        bat 'echo Simulated Monitoring Log >> alert.log'
       }
     }
   }

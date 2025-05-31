@@ -31,20 +31,23 @@ stage('Archive Docker Image') {
     }
 
     stage('Test Backend') {
-      steps {
-        dir('Backend') {
-          bat 'npm test || exit /b 0'
-        }
-      }
+  steps {
+    dir('Backend') {
+      bat 'npm install'
+      bat 'npm test -- --coverage || exit /b 0'
     }
+  }
+}
 
     stage('Test Frontend') {
-      steps {
-        dir('Frontend') {
-          bat 'npm test || exit /b 0'
-        }
-      }
+  steps {
+    dir('Frontend') {
+      bat 'npm install'
+      bat 'npm test -- --watchAll=false --coverage || exit /b 0'
     }
+  }
+}
+
 
     stage('Code Quality') {
       steps {

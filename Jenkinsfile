@@ -41,17 +41,12 @@ pipeline {
     }
 
     stage('Code Quality') {
-      environment {
-        SONAR_TOKEN = credentials('sonar-token')
-      }
-      steps {
-        dir('Backend') {
-          withSonarQubeEnv('MySonar') {
-            bat 'sonar-scanner -Dsonar.login=%SONAR_TOKEN%'
-          }
-        }
-      }
+  steps {
+    withSonarQubeEnv('MySonar') {
+      bat "sonar-scanner -Dsonar.login=${env.SONAR_TOKEN}"
     }
+  }
+}
 
     stage('Deploy') {
       steps {

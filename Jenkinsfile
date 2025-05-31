@@ -6,13 +6,13 @@ pipeline {
     JWT_SECRET   = credentials('jwt-secret')
     SONAR_TOKEN  = credentials('sonar-token')
   }
-
- stage('Build') {
-  steps {
-    echo '🔧 Building Docker image...'
-    bat 'docker build -t habitflow:latest .'
-  }
-}
+stages{
+   stage('Build') {
+     steps {
+      echo '🔧 Building Docker image...'
+      bat 'docker build -t habitflow:latest .'
+    }
+   }
 
     stage('Install Dependencies') {
       steps {

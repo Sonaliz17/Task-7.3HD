@@ -1,8 +1,9 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from '../App';
 
-test('renders Task Board heading', () => {
+test('renders Task Board title', () => {
   render(<App />);
-  const linkElement = screen.getByText(/Task Board/i);
-  expect(linkElement).toBeInTheDocument();
+  const title = screen.getByText(/Task Board/i);
+  expect(title).toBeInTheDocument();
 });

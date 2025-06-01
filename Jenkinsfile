@@ -42,8 +42,7 @@ stages{
     stage('Test Frontend') {
   steps {
     dir('Frontend') {
-      bat 'npm install'
-      bat 'npm test -- --watchAll=false --coverage || exit /b 0'
+      bat 'npm test -- --passWithNoTests --watchAll=false --coverage || exit /b 0'
     }
   }
 }

@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-  "test": "jest --detectOpenHandles"
-}
-,
+    "test": "jest --detectOpenHandles"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -20,6 +19,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.1.4",
     "supertest": "^7.1.1"
   }
 }

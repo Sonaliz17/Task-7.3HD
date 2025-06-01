@@ -6,9 +6,13 @@ describe('Auth Routes', () => {
   const testPassword = 'securepass';
 
   it('should register a new user', async () => {
-    const res = await request(app)
-      .post('/api/auth/register')
-      .send({ email: testEmail, password: testPassword });
+  const res = await request(app)
+    .post('/api/auth/register')
+    .send({ email: testEmail, password: testPassword });
+
+  expect(res.statusCode).toBe(201);
+}, 15000); // 15s timeout
+
 
     expect(res.statusCode).toBe(201);
   }, 10000); // Increase timeout

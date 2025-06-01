@@ -1,9 +1,10 @@
 const express = require('express');
 const app = express();
-const routes = require('./routes');
+const authRoutes = require('./routes/auth');
+const boardRoutes = require('./routes/boards');
 
-// middleware, body-parser, etc.
-app.use('/api', routes);
+app.use(express.json()); // required for POST body parsing
+app.use('/api/auth', authRoutes);
+app.use('/api/boards', boardRoutes);
 
-module.exports = app; // <-- export app instance only!
-
+module.exports = app;

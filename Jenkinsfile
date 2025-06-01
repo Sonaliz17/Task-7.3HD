@@ -31,21 +31,24 @@ stages{
     }
 
     stage('Test Backend') {
-  steps {
-    dir('Backend') {
-      bat 'npm install'
-      bat 'npm test -- --coverage || exit /b 0'
+   stage('Test Backend') {
+      steps {
+        dir('Backend') {
+          echo '--- Running Backend Tests ---'
+          bat 'npm test || exit /b 0'
+        }
+      }
     }
-  }
-}
 
     stage('Test Frontend') {
-  steps {
-    dir('Frontend') {
-      bat 'npm test -- --passWithNoTests --watchAll=false --coverage || exit /b 0'
+      steps {
+        dir('Frontend') {
+          echo '--- Running Frontend Tests ---'
+          bat 'npm test || exit /b 0'
+        }
+      }
     }
-  }
-}
+
 
 
     stage('Code Quality') {

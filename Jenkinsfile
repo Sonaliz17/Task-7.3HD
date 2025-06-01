@@ -29,8 +29,6 @@ stages{
         }
       }
     }
-
-    stage('Test Backend') {
    stage('Test Backend') {
       steps {
         dir('Backend') {

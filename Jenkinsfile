@@ -18,7 +18,7 @@ stages{
     //archiveArtifacts artifacts: 'habitflow.tar', fingerprint: true
   //}
 //}
-
+/*
     stage('Install Dependencies') {
       steps {
         dir('Backend') {
@@ -47,7 +47,7 @@ stages{
       }
     }
 
-
+*/
 
     stage('Code Quality') {
       steps {

@@ -1,14 +1,9 @@
 const express = require('express');
-const cors = require('cors');
-const authRoutes = require('./routes/auth');
-const boardRoutes = require('./routes/boards');
-
 const app = express();
-app.use(cors());
-app.use(express.json());
+const routes = require('./routes');
 
-app.use('/api/auth', authRoutes);
-app.use('/api/boards', boardRoutes);
+// middleware, body-parser, etc.
+app.use('/api', routes);
 
-app.get('/', (req, res) => res.send('Backend is running'));
-module.exports = app;
+module.exports = app; // <-- export app instance only!
+

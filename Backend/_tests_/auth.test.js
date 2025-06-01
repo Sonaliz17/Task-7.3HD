@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../server'); // ensure this exports your Express app
+const app = require('../app'); // ensure this exports your Express app
 
 describe('Auth Routes', () => {
   const testEmail = 'hdtest@example.com';

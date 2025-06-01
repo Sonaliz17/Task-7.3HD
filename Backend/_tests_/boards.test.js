@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../server');
+const app = require('../app');
 
 describe('Board Access', () => {
   it('should block access without token', async () => {

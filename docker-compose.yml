@@ -7,11 +7,11 @@ services:
     ports:
       - "27017:27017"
 
+services:
   app:
     build: .
     ports:
-      - "3000:3000"
-    environment:
-      MONGO_URI: mongodb://mongo:27017/your-db-name
+      - "3000:3000"  # 👈 This line exposes container port 3000 to host
     depends_on:
-      - mongo
+      - mongo-db
+

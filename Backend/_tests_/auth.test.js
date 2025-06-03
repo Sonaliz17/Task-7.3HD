@@ -1,14 +1,19 @@
 const request = require('supertest');
 const app = require('../app');
 
-// Mock the Mongoose User model and connection
-jest.mock('mongoose', () => ({
-  connect: jest.fn(),
-  connection: { close: jest.fn() }
-}));
+// ONLY mock mongoose.connect and mongoose.connection.close
+jest.mock('mongoose', () => {
+  const actualMongoose = jest.requireActual('mongoose');
+  return {
+    ...actualMongoose,
+    connect: jest.fn(),
+    connection: { close: jest.fn() }
+  };
+});
 
+// Mock User model only
 jest.mock('../models/User', () => ({
-  findOne: jest.fn().mockResolvedValue(null)  // simulate user not found
+  findOne: jest.fn().mockResolvedValue(null)
 }));
 
 describe('Auth API', () => {
@@ -21,4 +26,3 @@ describe('Auth API', () => {
     expect(res.body).toHaveProperty('message', 'Invalid credentials');
   });
 });
-

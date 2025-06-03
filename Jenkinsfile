@@ -7,18 +7,17 @@ pipeline {
     SONAR_TOKEN  = credentials('sonar-token')
   }
 stages{
- // stage('Build') {
-  //steps {
-    //bat 'docker build -t board-task-app .'
-  //}
-//}
-//stage('Archive Docker Image') {
-  //steps {
-    //bat 'docker save board-task-app -o board-task-app.tar'
-    //archiveArtifacts artifacts: 'board-task-app.tar', fingerprint: true
-  //}
-//}
-/*
+ stage('Build') {
+  steps {
+    bat 'docker build -t board-task-app .'
+  }
+}
+stage('Archive Docker Image') {
+  steps {
+    bat 'docker save board-task-app -o board-task-app.tar'
+    archiveArtifacts artifacts: 'board-task-app.tar', fingerprint: true
+  }
+}
     stage('Install Dependencies') {
       steps {
         dir('Backend') {

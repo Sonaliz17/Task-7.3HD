@@ -1,28 +1,24 @@
 const request = require('supertest');
 const app = require('../app');
-const mongoose = require('mongoose');
 
-// Increase timeout
-jest.setTimeout(10000);
+// Mock the Mongoose User model and connection
+jest.mock('mongoose', () => ({
+  connect: jest.fn(),
+  connection: { close: jest.fn() }
+}));
+
+jest.mock('../models/User', () => ({
+  findOne: jest.fn().mockResolvedValue(null)  // simulate user not found
+}));
 
 describe('Auth API', () => {
-  beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost/taskmanager', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-  });
-
-  afterAll(async () => {
-    await mongoose.connection.close();
-  });
-
   it('should return 401 for invalid login', async () => {
     const res = await request(app)
       .post('/api/auth/login')
-      .send({ email: 'wrong@example.com', password: 'wrongpass' });
+      .send({ email: 'invalid@example.com', password: 'wrongpass' });
 
     expect(res.statusCode).toBe(401);
+    expect(res.body).toHaveProperty('message', 'Invalid credentials');
   });
 });
 

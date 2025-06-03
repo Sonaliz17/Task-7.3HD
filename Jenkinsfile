@@ -46,8 +46,6 @@ stage('Archive Docker Image') {
       }
     }
 
-*/
-
     stage('Code Quality') {
       steps {
         dir('Backend') {

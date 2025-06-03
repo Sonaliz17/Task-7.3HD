@@ -61,11 +61,14 @@ stages{
       }
     }
 
-    stage('Deploy') {
-      steps {
-        bat 'echo Simulated deploy step'
-      }
-    }
+   stage('Deploy') {
+  steps {
+    echo '🚀 Deploying container from saved image'
+    bat 'docker load -i board-task-app.tar'
+    bat 'docker run -d -p 3000:3000 board-task-app'
+  }
+}
+
 
     stage('Monitoring') {
       steps {

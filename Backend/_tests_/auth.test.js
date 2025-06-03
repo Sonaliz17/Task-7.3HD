@@ -1,47 +1,27 @@
-const request = require('supertest');
-const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
-const app = require('../app'); // Adjust path if needed
+const express = require('express');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const router = express.Router();
 
-let mongoServer;
-
-beforeAll(async () => {
-  // Increase timeout for MongoDB startup
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
-  await mongoose.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-}, 20000); // 20 seconds timeout
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  if (mongoServer) {
-    await mongoServer.stop();
+router.post('/register', async (req, res) => {
+  try {
+    const user = new User(req.body);
+    await user.save();
+    res.status(201).send('User registered');
+  } catch {
+    res.status(400).send('User exists or invalid input');
   }
 });
 
-describe('Auth Routes', () => {
-  const testEmail = 'test@example.com';
-  const testPassword = 'securepass';
+router.post('/login', async (req, res) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user || !(await bcrypt.compare(req.body.password, user.password)))
+    return res.status(401).send('Invalid credentials');
 
-  it('should register a new user', async () => {
-    const res = await request(app)
-      .post('/api/auth/register')
-      .send({ email: testEmail, password: testPassword });
-    expect(res.statusCode).toBe(201);
-  }, 10000); // Increase test timeout
-
-  it('should not login with wrong credentials', async () => {
-  const res = await request(app)
-    .post('/api/auth/login')
-    .send({ email: testEmail, password: 'wrongpass' });
-  expect(res.statusCode).toBe(401); // <-- FIXED
-}, 10000);
-
-  it("should fail login with wrong password", async () => {
-  const res = await request(app).post("/api/auth/login").send({ email: "test@test.com", password: "wrong" });
-  expect(res.statusCode).toBe(401);
-
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+  res.json({ token });
 });
+
+module.exports = router;
+

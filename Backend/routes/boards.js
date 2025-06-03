@@ -3,110 +3,131 @@ const Board = require('../models/Board');
 const auth = require('../middleware/auth');
 const router = express.Router();
 
-// 🔧 Helper: Handle errors
-const handleError = (res, message = 'Server Error', code = 500) =>
-  res.status(code).json({ error: message });
+// Helper to find board by ID
+async function findBoard(req, res, param = 'id') {
+  try {
+    const board = await Board.findOne({ _id: req.params[param], user: req.user.id });
+    if (!board) {
+      res.status(404).json({ error: 'Board not found' });
+      return null;
+    }
+    return board;
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+    return null;
+  }
+}
 
-// 🔧 GET all boards
+// Get all boards
 router.get('/', auth, async (req, res) => {
   try {
     const boards = await Board.find({ user: req.user.id });
     res.json(boards);
   } catch (err) {
-    handleError(res, err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// 🔧 POST new board
+// Create new board
 router.post('/', auth, async (req, res) => {
   try {
     const board = new Board({ name: req.body.name, user: req.user.id });
     await board.save();
     res.status(201).json(board);
   } catch (err) {
-    handleError(res, err.message);
+    res.status(400).json({ error: err.message });
   }
 });
 
-// 🔧 PUT update board
+// Update board
 router.put('/:id', auth, async (req, res) => {
   try {
-    const board = await Board.findOneAndUpdate(
-      { _id: req.params.id, user: req.user.id },
-      { name: req.body.name },
-      { new: true }
-    );
-    if (!board) return handleError(res, 'Board not found', 404);
+    const board = await findBoard(req, res);
+    if (!board) return;
+
+    board.name = req.body.name || board.name;
+    await board.save();
     res.json(board);
   } catch (err) {
-    handleError(res, err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// 🔧 DELETE board
+// Delete board
 router.delete('/:id', auth, async (req, res) => {
   try {
-    const board = await Board.findOneAndDelete({ _id: req.params.id, user: req.user.id });
-    if (!board) return handleError(res, 'Board not found', 404);
-    res.send('Board deleted');
+    const board = await findBoard(req, res);
+    if (!board) return;
+
+    await board.deleteOne();
+    res.json({ message: 'Board deleted' });
   } catch (err) {
-    handleError(res, err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// 🔧 GET all tasks for a board
+// Get tasks
 router.get('/:id/tasks', auth, async (req, res) => {
   try {
-    const board = await Board.findOne({ _id: req.params.id, user: req.user.id });
-    if (!board) return handleError(res, 'Board not found', 404);
+    const board = await findBoard(req, res);
+    if (!board) return;
     res.json(board.tasks);
   } catch (err) {
-    handleError(res, err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// 🔧 POST new task
+// Add task
 router.post('/:id/tasks', auth, async (req, res) => {
   try {
-    const board = await Board.findOne({ _id: req.params.id, user: req.user.id });
-    if (!board) return handleError(res, 'Board not found', 404);
+    const board = await findBoard(req, res);
+    if (!board) return;
+
     board.tasks.push({ text: req.body.text });
     await board.save();
-    res.json(board.tasks);
+    res.status(201).json(board.tasks);
   } catch (err) {
-    handleError(res, err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// 🔧 PUT update task
+// Update task
 router.put('/:boardId/tasks/:taskId', auth, async (req, res) => {
   try {
-    const board = await Board.findOne({ _id: req.params.boardId, user: req.user.id });
-    const task = board?.tasks.id(req.params.taskId);
-    if (!task) return handleError(res, 'Task not found', 404);
+    const board = await findBoard(req, res, 'boardId');
+    if (!board) return;
+
+    const task = board.tasks.id(req.params.taskId);
+    if (!task) return res.status(404).json({ error: 'Task not found' });
+
     task.text = req.body.text ?? task.text;
     task.completed = req.body.completed ?? task.completed;
+
     await board.save();
     res.json(task);
   } catch (err) {
-    handleError(res, err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// 🔧 DELETE task
+// Delete task
 router.delete('/:boardId/tasks/:taskId', auth, async (req, res) => {
   try {
-    const board = await Board.findOne({ _id: req.params.boardId, user: req.user.id });
-    const task = board?.tasks.id(req.params.taskId);
-    if (!task) return handleError(res, 'Task not found', 404);
+    const board = await findBoard(req, res, 'boardId');
+    if (!board) return;
+
+    const task = board.tasks.id(req.params.taskId);
+    if (!task) return res.status(404).json({ error: 'Task not found' });
+
     task.remove();
     await board.save();
-    res.send('Task deleted');
+    res.json({ message: 'Task deleted' });
   } catch (err) {
-    handleError(res, err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
 module.exports = router;
+
 
 

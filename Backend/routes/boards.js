@@ -26,7 +26,9 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 router.delete('/:id', auth, async (req, res) => {
-  const board = await Board.findOneAndDelete({ _id: req.params.id, user: req.user.id });
+ async function findBoard(req) {
+  return await Board.findOne({ _id: req.params.id, user: req.user.id });
+}
   if (!board) return res.status(404).send('Board not found');
   res.send('Board deleted');
 });

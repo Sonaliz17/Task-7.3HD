@@ -9,13 +9,13 @@ pipeline {
 stages{
  // stage('Build') {
   //steps {
-    //bat 'docker build -t habitflow-app .'
+    //bat 'docker build -t board-task-app .'
   //}
 //}
 //stage('Archive Docker Image') {
   //steps {
-    //bat 'docker save habitflow-app -o habitflow.tar'
-    //archiveArtifacts artifacts: 'habitflow.tar', fingerprint: true
+    //bat 'docker save board-task-app -o board-task-app.tar'
+    //archiveArtifacts artifacts: 'board-task-app.tar', fingerprint: true
   //}
 //}
 /*

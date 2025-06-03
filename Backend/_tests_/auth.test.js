@@ -1,19 +1,9 @@
 const request = require('supertest');
 const app = require('../app');
 
-// ONLY mock mongoose.connect and mongoose.connection.close
-jest.mock('mongoose', () => {
-  const actualMongoose = jest.requireActual('mongoose');
-  return {
-    ...actualMongoose,
-    connect: jest.fn(),
-    connection: { close: jest.fn() }
-  };
-});
-
-// Mock User model only
+// Mock only User model
 jest.mock('../models/User', () => ({
-  findOne: jest.fn().mockResolvedValue(null)
+  findOne: jest.fn().mockResolvedValue(null),
 }));
 
 describe('Auth API', () => {
